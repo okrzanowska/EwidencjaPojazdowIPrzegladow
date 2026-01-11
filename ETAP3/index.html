@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ewidencja Pojazdów</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .header-section {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+        }
+        .table thead {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .table thead th {
+            border: none;
+            padding: 1rem;
+        }
+        .table tbody tr:hover {
+            background-color: #e7f1ff;
+        }
+        .btn-action {
+            margin: 0 2px;
+        }
+        .modal-header {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+    </style>
+</head>
+<body>
+    <header class="header-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1><i class="bi bi-car-front-fill me-2"></i>Ewidencja Pojazdów</h1>
+                </div>
+                <div class="col text-end">
+                    <button type="button" class="btn btn-light btn-lg" data-bs-toggle="modal" data-bs-target="#vehicleModal" onclick="openAddModal()">
+                        <i class="bi bi-plus-circle me-2"></i>Dodaj pojazd
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="table-container">
+            <h4 class="mb-3"><i class="bi bi-list-ul me-2"></i>Lista pojazdów</h4>
+            
+            <table class="table table-striped table-hover" id="vehiclesTable">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nr rejestracyjny</th>
+                        <th scope="col">Marka</th>
+                        <th scope="col">Model</th>
+                        <th scope="col">Rok produkcji</th>
+                        <th scope="col">Data przeglądu</th>
+                        <th scope="col">Właściciel</th>
+                        <th scope="col" class="text-center">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody id="vehiclesTableBody">
+                    <tr>
+                        <td>1</td>
+                        <td><span class="badge bg-secondary">KR 12345</span></td>
+                        <td>Toyota</td>
+                        <td>Corolla</td>
+                        <td>2020</td>
+                        <td>2026-02-15</td>
+                        <td>Jan Kowalski</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-primary btn-action" onclick="editVehicle(0)" title="Edytuj">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger btn-action" onclick="deleteVehicle(0)" title="Usuń">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><span class="badge bg-secondary">WA 98765</span></td>
+                        <td>Volkswagen</td>
+                        <td>Golf</td>
+                        <td>2019</td>
+                        <td>2026-01-20</td>
+                        <td>Anna Nowak</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-primary btn-action" onclick="editVehicle(1)" title="Edytuj">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger btn-action" onclick="deleteVehicle(1)" title="Usuń">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><span class="badge bg-secondary">GD 55555</span></td>
+                        <td>Ford</td>
+                        <td>Focus</td>
+                        <td>2021</td>
+                        <td>2026-03-10</td>
+                        <td>Piotr Wiśniewski</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-primary btn-action" onclick="editVehicle(2)" title="Edytuj">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger btn-action" onclick="deleteVehicle(2)" title="Usuń">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div class="modal fade" id="vehicleModal" tabindex="-1" aria-labelledby="vehicleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="vehicleModalLabel">
+                        <i class="bi bi-plus-circle me-2"></i>Dodaj nowy pojazd
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Zamknij"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="vehicleForm">
+                        <input type="hidden" id="vehicleIndex" value="-1">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="registrationNumber" class="form-label">
+                                    <i class="bi bi-card-text me-1"></i>Nr rejestracyjny
+                                </label>
+                                <input type="text" class="form-control" id="registrationNumber" placeholder="np. KR 12345">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="brand" class="form-label">
+                                    <i class="bi bi-building me-1"></i>Marka
+                                </label>
+                                <input type="text" class="form-control" id="brand" placeholder="np. Toyota">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="model" class="form-label">
+                                    <i class="bi bi-tag me-1"></i>Model
+                                </label>
+                                <input type="text" class="form-control" id="model" placeholder="np. Corolla">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="productionYear" class="form-label">
+                                    <i class="bi bi-calendar-date me-1"></i>Rok produkcji
+                                </label>
+                                <input type="number" class="form-control" id="productionYear" placeholder="np. 2020">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="reviewDate" class="form-label">
+                                    <i class="bi bi-calendar-check me-1"></i>Data przeglądu
+                                </label>
+                                <input type="date" class="form-control" id="reviewDate">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="owner" class="form-label">
+                                    <i class="bi bi-person me-1"></i>Właściciel
+                                </label>
+                                <input type="text" class="form-control" id="owner" placeholder="np. Jan Kowalski">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i>Anuluj
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="saveVehicle()">
+                        <i class="bi bi-check-circle me-1"></i>Zapisz
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let vehicles = [
+            { registrationNumber: 'KR 12345', brand: 'Toyota', model: 'Corolla', productionYear: 2020, reviewDate: '2026-02-15', owner: 'Jan Kowalski' },
+            { registrationNumber: 'WA 98765', brand: 'Volkswagen', model: 'Golf', productionYear: 2019, reviewDate: '2026-01-20', owner: 'Anna Nowak' },
+            { registrationNumber: 'GD 55555', brand: 'Ford', model: 'Focus', productionYear: 2021, reviewDate: '2026-03-10', owner: 'Piotr Wiśniewski' }
+        ];
+
+        const vehicleModal = new bootstrap.Modal(document.getElementById('vehicleModal'));
+
+        function openAddModal() {
+            document.getElementById('vehicleModalLabel').innerHTML = '<i class="bi bi-plus-circle me-2"></i>Dodaj nowy pojazd';
+            document.getElementById('vehicleForm').reset();
+            document.getElementById('vehicleIndex').value = -1;
+        }
+
+        function editVehicle(index) {
+            const vehicle = vehicles[index];
+            document.getElementById('vehicleModalLabel').innerHTML = '<i class="bi bi-pencil me-2"></i>Edytuj pojazd';
+            document.getElementById('vehicleIndex').value = index;
+            document.getElementById('registrationNumber').value = vehicle.registrationNumber;
+            document.getElementById('brand').value = vehicle.brand;
+            document.getElementById('model').value = vehicle.model;
+            document.getElementById('productionYear').value = vehicle.productionYear;
+            document.getElementById('reviewDate').value = vehicle.reviewDate;
+            document.getElementById('owner').value = vehicle.owner;
+            vehicleModal.show();
+        }
+
+        function saveVehicle() {
+            const vehicle = {
+                registrationNumber: document.getElementById('registrationNumber').value,
+                brand: document.getElementById('brand').value,
+                model: document.getElementById('model').value,
+                productionYear: parseInt(document.getElementById('productionYear').value),
+                reviewDate: document.getElementById('reviewDate').value,
+                owner: document.getElementById('owner').value
+            };
+
+            const index = parseInt(document.getElementById('vehicleIndex').value);
+            
+            if (index === -1) {
+                vehicles.push(vehicle);
+            } else {
+                vehicles[index] = vehicle;
+            }
+
+            vehicleModal.hide();
+            renderTable();
+        }
+
+        function deleteVehicle(index) {
+            vehicles.splice(index, 1);
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('vehiclesTableBody');
+            
+            if (vehicles.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                            <p class="mb-0 mt-2">Brak pojazdów. Kliknij "Dodaj pojazd" aby dodać pierwszy pojazd.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = vehicles.map((vehicle, index) => `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><span class="badge bg-secondary">${vehicle.registrationNumber}</span></td>
+                    <td>${vehicle.brand}</td>
+                    <td>${vehicle.model}</td>
+                    <td>${vehicle.productionYear}</td>
+                    <td>${vehicle.reviewDate}</td>
+                    <td>${vehicle.owner}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary btn-action" onclick="editVehicle(${index})" title="Edytuj">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger btn-action" onclick="deleteVehicle(${index})" title="Usuń">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
